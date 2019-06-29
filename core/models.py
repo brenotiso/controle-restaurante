@@ -33,11 +33,11 @@ class Mesa(models.Model):
     disponivel = models.BooleanField('Disponível', null=True, default=True)
 
     def __str__(self):
-        return self.id
+        return str(self.id)
 
 
 class Pedido_Detalhe(models.Model):
-    produto = models.OneToOneField(Produto, on_delete=models.PROTECT)
+    produto = models.ForeignKey(Produto, on_delete=models.PROTECT)
     observacao = models.CharField('Observação', max_length=400)
     quantidade = models.PositiveIntegerField(validators=[MinValueValidator(0)])
 
@@ -46,9 +46,9 @@ class Pedido_Detalhe(models.Model):
 
 
 class Pedido(models.Model):
-    mesa = models.ManyToManyField(Mesa, related_name='pedidos')
-    pedido_detalhe = models.ForeignKey(Pedido_Detalhe, related_name='pedidos', on_delete=models.PROTECT)
-    baixa = models.BooleanField(default=False) # quando fechar a mesa é passado para True
+    mesa = models.ForeignKey(Mesa, related_name='pedidos', on_delete=models.PROTECT)
+    pedido_detalhe = models.ManyToManyField(Pedido_Detalhe, related_name='pedidos')
+    baixa = models.BooleanField(default=False)  # quando fechar a mesa é passado para True
 
     def __str__(self):
-        return self.id
+        return str(self.id)
