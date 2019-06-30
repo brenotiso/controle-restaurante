@@ -1,3 +1,4 @@
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import (
     status,
     viewsets
@@ -17,7 +18,8 @@ from .serializers import (
     ProdutoSerializer,
     MesaSerializer,
     PedidoDetalheSerializer,
-    PedidoSerializer
+    PedidoSerializer,
+    PedidoEdicaoSerializer
 )
 
 
@@ -64,3 +66,13 @@ class PedidoDetalheViewSet(viewsets.ModelViewSet):
 class PedidoViewSet(viewsets.ModelViewSet):
     serializer_class = PedidoSerializer
     queryset = Pedido.objects.all()
+    filter_backends = (DjangoFilterBackend,)
+    filterset_fields = ('visto', 'baixa', 'mesa')
+
+    def get_serializer_class(self):
+        serializer_class = self.serializer_class
+
+        if self.request.method == 'PUT' or self.request.method == 'PATCH':
+            serializer_class = PedidoEdicaoSerializer
+
+        return serializer_class

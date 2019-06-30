@@ -39,8 +39,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'oauth2_provider',  # OAuth2
     'rest_framework',  # API
-    # apps do prjeto
+    'django_filters',  # Filtros
+    # apps do projeto
     'core',
+    'users',
 ]
 
 REST_FRAMEWORK = {
@@ -50,6 +52,9 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
+    ],
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend',
     ],
 }
 

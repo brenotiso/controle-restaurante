@@ -49,6 +49,7 @@ class Pedido(models.Model):
     mesa = models.ForeignKey(Mesa, related_name='pedidos', on_delete=models.PROTECT)
     pedido_detalhe = models.ManyToManyField(Pedido_Detalhe, related_name='pedidos')
     baixa = models.BooleanField(default=False)  # quando fechar a mesa é passado para True
+    visto = models.BooleanField(default=False)
 
     def __str__(self):
         return str(self.id)
