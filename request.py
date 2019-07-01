@@ -1,4 +1,5 @@
 import requests
+from time import sleep
 
 def login():
 	URL = "http://35.247.232.28/authentication/token/"
@@ -120,7 +121,7 @@ def put_mesas():
 
 
 #############################################
-######### Metodos das Categorias #################
+######## Metodos das Categorias #############
 ############################################
 
 def get_categorias():
@@ -335,6 +336,14 @@ def get_pedidos():
 	return data
 	
 
+def get_pedidos_visto():
+	URL = "http://35.247.232.28/pedidos?visto=false"
+	headers = {"Authorization": "Bearer "+token}
+	r = requests.get(url = URL, headers=headers)
+	data = r.json()
+	return data
+
+
 def get_num_pedidos():
 	num = int(input())
 	URL = "http://35.247.232.28/pedidos/"+num
@@ -357,7 +366,7 @@ def delete_pedidos():
 def post_pedidos():
 	URL = "http://35.247.232.28/pedidos"
 	mesa = int(input())
-	pedido_detalhe = input()
+	pedido_detalhe = list(map(int, input().split(' ')))
 	baixa = input()
 	data = {'mesa' : mesa,
 			'pedido_detalhe' : pedido_detalhe,
@@ -372,29 +381,48 @@ def put_pedidos():
 	num = input()
 	URL = "http://35.247.232.28/pedidos/"+num
 	mesa = int(input())
-	pedido_detalhe = int(input())
+	pedido_detalhe = list(map(int, input().split(' ')))
 	baixa = input()
+	headers = {"Authorization": "Bearer "+token}
 	data = {'mesa' : mesa,
 			'pedido_detalhe' : pedido_detalhe,
 			'baixa' : baixa
 			}
-	headers = {"Authorization": "Bearer "+token}
 	r = requests.put(url = URL, data=data, headers=headers)
 	data = r.json() 
 	print (data)
+	
+def print_pedido(num):
+	headers = {"Authorization": "Bearer "+token}
+	URL = "http://35.247.232.28/pedidos/"+str(num)
+	data = {'visto' : True
+			}
+	r = requests.patch(url = URL, data=data, headers=headers)
+	data = r.json()
+	print (data)
+	for i in data['pedido_detalhe']:
+		URL = "http://35.247.232.28/pedidos_detalhe/"+str(i)
+		r = requests.get(url = URL, headers=headers)
+		data = r.json()
+		print (data)
+		URL = "http://35.247.232.28/produtos/"+str(data['produto'])
+		r = requests.get(url = URL, headers=headers)
+		data = r.json()
+		print (data)
+	print("\n\n")
 
-
-get_pedidos()
-post_pedidos()
+#get_pedidos()
+#post_pedidos()
 #put_pedidos()
 #delete_pedidos()
 
 def main():
 	while(True):
-		data = get_pedidos()
+		data = get_pedidos_visto()
 		if data != []:
 			for i in data:
-				print(i.mesa)
-				
-	
+				print_pedido(i['id'])
+		sleep(10)
+
 main()
+
